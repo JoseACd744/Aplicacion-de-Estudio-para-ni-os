@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="App de práctica de lectura y razonamiento verbal para 6to de primaria">
+    <meta name="theme-color" content="#4A90E2">
+    <title>Práctica de Lectura - 6to Primaria</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="icon.png">
+</head>
+<body>
+    <div class="container">
+        <!-- Pantalla de Inicio -->
+        <div id="home-screen" class="screen active">
+            <header class="header">
+                <h1>📚 Mi Lectura</h1>
+                <p class="subtitle">6to Grado de Primaria</p>
+            </header>
+            
+            <div class="menu-cards">
+                <div class="card" onclick="showScreen('lectura-screen')">
+                    <div class="card-icon">📖</div>
+                    <h2>Comprensión Lectora</h2>
+                    <p>Lee textos y responde preguntas</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('razonamiento-screen')">
+                    <div class="card-icon">🧠</div>
+                    <h2>Razonamiento Verbal</h2>
+                    <p>Sinónimos, antónimos y analogías</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('matematicas-screen')">
+                    <div class="card-icon">🔢</div>
+                    <h2>Matemáticas</h2>
+                    <p>Resuelve problemas matemáticos</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('dictado-screen')">
+                    <div class="card-icon">✍️</div>
+                    <h2>Dictados</h2>
+                    <p>Escucha y escribe correctamente</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('progreso-screen')">
+                    <div class="card-icon">📊</div>
+                    <h2>Mi Progreso</h2>
+                    <p>Ve tus estadísticas e insignias</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Comprensión Lectora -->
+        <div id="lectura-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+                <h2>Comprensión Lectora</h2>
+            </div>
+            
+            <div class="content-area">
+                <div id="lectura-texto" class="texto-lectura"></div>
+                <div id="lectura-preguntas" class="preguntas-container"></div>
+                <button id="btn-verificar-lectura" class="btn-primary" style="display:none;">Verificar Respuestas</button>
+                <div id="lectura-resultado" class="resultado"></div>
+                <button id="btn-siguiente-lectura" class="btn-primary" style="display:none;">Siguiente Lectura</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Razonamiento Verbal -->
+        <div id="razonamiento-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+                <h2>Razonamiento Verbal</h2>
+            </div>
+            
+            <div class="menu-secundario">
+                <button class="btn-secondary" onclick="iniciarActividad('sinonimos')">Sinónimos</button>
+                <button class="btn-secondary" onclick="iniciarActividad('antonimos')">Antónimos</button>
+                <button class="btn-secondary" onclick="iniciarActividad('analogias')">Analogías</button>
+                <button class="btn-secondary" onclick="iniciarActividad('oraciones')">Completar Oraciones</button>
+            </div>
+            
+            <div id="razonamiento-contenido" class="content-area"></div>
+        </div>
+
+        <!-- Pantalla de Matemáticas -->
+        <div id="matematicas-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+                <h2>Matemáticas</h2>
+            </div>
+            
+            <div class="menu-secundario">
+                <button class="btn-secondary" onclick="iniciarMatematicas('aritmetica')">Aritmética</button>
+                <button class="btn-secondary" onclick="iniciarMatematicas('fracciones')">Fracciones</button>
+                <button class="btn-secondary" onclick="iniciarMatematicas('geometria')">Geometría</button>
+                <button class="btn-secondary" onclick="iniciarMatematicas('problemas')">Problemas</button>
+            </div>
+            
+            <div id="matematicas-contenido" class="content-area"></div>
+        </div>
+
+        <!-- Pantalla de Dictados -->
+        <div id="dictado-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+                <h2>Dictados</h2>
+            </div>
+            
+            <div class="content-area">
+                <div class="dictado-info">
+                    <p>🎧 Escucha atentamente y escribe lo que oigas</p>
+                </div>
+                
+                <div id="dictado-contenido">
+                    <button id="btn-reproducir-dictado" class="btn-primary">▶️ Reproducir Dictado</button>
+                    <textarea id="dictado-texto" placeholder="Escribe aquí lo que escuchaste..." rows="6"></textarea>
+                    <button id="btn-verificar-dictado" class="btn-primary">Verificar</button>
+                    <div id="dictado-resultado" class="resultado"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Progreso -->
+        <div id="progreso-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+                <h2>Mi Progreso</h2>
+            </div>
+            
+            <div class="content-area">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">📖</div>
+                        <div class="stat-info">
+                            <h3 id="stat-lecturas">0</h3>
+                            <p>Lecturas completadas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">🔢</div>
+                        <div class="stat-info">
+                            <h3 id="stat-matematicas">0</h3>
+                            <p>Ejercicios matemáticos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-info">
+                            <h3 id="stat-promedio">0%</h3>
+                            <p>Promedio general</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-info">
+                            <h3 id="stat-puntos">0</h3>
+                            <p>Puntos totales</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="insignias-section">
+                    <h3>🏅 Mis Insignias</h3>
+                    <div id="insignias-container" class="insignias-grid">    </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">✍️</div>
+                        <div class="stat-info">
+                            <h3 id="stat-dictados">0</h3>
+                            <p>Dictados realizados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-info">
+                            <h3 id="stat-promedio">0%</h3>
+                            <p>Promedio general</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-secondary" onclick="resetearProgreso()">Reiniciar Progreso</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
