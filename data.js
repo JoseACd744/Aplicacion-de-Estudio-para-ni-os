@@ -1,3 +1,4 @@
+
 // Data.js - Base de datos de la aplicación educativa
 
 const lecturas = [
@@ -9,17 +10,17 @@ const lecturas = [
             {
                 pregunta: "¿Cuál era la capital del Imperio Inca?",
                 opciones: ["Lima", "Cusco", "Arequipa", "Trujillo"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿Qué construyeron los incas en las montañas?",
                 opciones: ["El Coliseo", "La Muralla China", "Machu Picchu", "Las Pirámides"],
-                respuesta: 2
+                correcta: 2
             },
             {
                 pregunta: "¿Qué idioma hablaban los incas?",
                 opciones: ["Español", "Aymara", "Quechua", "Guaraní"],
-                respuesta: 2
+                correcta: 2
             }
         ]
     },
@@ -31,17 +32,17 @@ const lecturas = [
             {
                 pregunta: "¿Qué porcentaje del Perú ocupa la Amazonia?",
                 opciones: ["30%", "45%", "60%", "75%"],
-                respuesta: 2
+                correcta: 2
             },
             {
                 pregunta: "¿Qué produce la Amazonia para el planeta?",
                 opciones: ["Agua", "Oxígeno", "Petróleo", "Minerales"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿Cuál es el río más importante de la Amazonia?",
                 opciones: ["Nilo", "Amazonas", "Rímac", "Mantaro"],
-                respuesta: 1
+                correcta: 1
             }
         ]
     },
@@ -53,17 +54,17 @@ const lecturas = [
             {
                 pregunta: "¿Quién inventó la bombilla eléctrica?",
                 opciones: ["Newton", "Einstein", "Edison", "Tesla"],
-                respuesta: 2
+                correcta: 2
             },
             {
                 pregunta: "¿Qué permitió difundir el conocimiento?",
                 opciones: ["La radio", "La imprenta", "La televisión", "El teléfono"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿Qué invento revolucionó el transporte?",
                 opciones: ["El barco", "La rueda", "El avión", "El tren"],
-                respuesta: 1
+                correcta: 1
             }
         ]
     },
@@ -75,17 +76,17 @@ const lecturas = [
             {
                 pregunta: "¿En qué año nació Mario Vargas Llosa?",
                 opciones: ["1920", "1936", "1945", "1950"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿Qué premio ganó en 2010?",
                 opciones: ["Oscar", "Nobel de Literatura", "Pulitzer", "Cervantes"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿Dónde nació Vargas Llosa?",
                 opciones: ["Lima", "Cusco", "Arequipa", "Trujillo"],
-                respuesta: 2
+                correcta: 2
             }
         ]
     },
@@ -97,17 +98,17 @@ const lecturas = [
             {
                 pregunta: "¿Qué porcentaje de agua dulce hay en la Tierra?",
                 opciones: ["1%", "3%", "10%", "25%"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿De qué porcentaje de agua está compuesto el cuerpo humano?",
                 opciones: ["30%", "45%", "60%", "80%"],
-                respuesta: 2
+                correcta: 2
             },
             {
                 pregunta: "¿Cuál NO es parte del ciclo del agua?",
                 opciones: ["Evaporación", "Condensación", "Oxidación", "Precipitación"],
-                respuesta: 2
+                correcta: 2
             }
         ]
     },
@@ -119,17 +120,17 @@ const lecturas = [
             {
                 pregunta: "¿En qué deporte destacó Sofía Mulanovich?",
                 opciones: ["Natación", "Surf", "Atletismo", "Voleibol"],
-                respuesta: 1
+                correcta: 1
             },
             {
                 pregunta: "¿Quién es el máximo goleador de la selección peruana?",
                 opciones: ["Pizarro", "Farfán", "Paolo Guerrero", "Cubillas"],
-                respuesta: 2
+                correcta: 2
             },
             {
                 pregunta: "¿En qué Mundiales participó Teófilo Cubillas?",
                 opciones: ["1962 y 1966", "1970 y 1978", "1982 y 1986", "1990 y 1994"],
-                respuesta: 1
+                correcta: 1
             }
         ]
     }
@@ -137,82 +138,82 @@ const lecturas = [
 
 const razonamientoVerbal = {
     sinonimos: [
-        { palabra: "ALEGRE", opciones: ["Triste", "Feliz", "Enojado", "Aburrido"], respuesta: 1 },
-        { palabra: "RÁPIDO", opciones: ["Lento", "Veloz", "Pesado", "Débil"], respuesta: 1 },
-        { palabra: "GRANDE", opciones: ["Pequeño", "Enorme", "Delgado", "Corto"], respuesta: 1 },
-        { palabra: "INTELIGENTE", opciones: ["Tonto", "Sabio", "Torpe", "Lento"], respuesta: 1 },
-        { palabra: "HERMOSO", opciones: ["Feo", "Bello", "Sucio", "Viejo"], respuesta: 1 },
-        { palabra: "VALIENTE", opciones: ["Cobarde", "Audaz", "Débil", "Perezoso"], respuesta: 1 },
-        { palabra: "DIFÍCIL", opciones: ["Fácil", "Complicado", "Simple", "Ligero"], respuesta: 1 },
-        { palabra: "FUERTE", opciones: ["Débil", "Poderoso", "Flaco", "Pequeño"], respuesta: 1 },
-        { palabra: "BRILLANTE", opciones: ["Opaco", "Luminoso", "Oscuro", "Mate"], respuesta: 1 },
-        { palabra: "ANTIGUO", opciones: ["Moderno", "Viejo", "Nuevo", "Reciente"], respuesta: 1 },
-        { palabra: "LIMPIO", opciones: ["Sucio", "Pulcro", "Manchado", "Grasoso"], respuesta: 1 },
-        { palabra: "TRANQUILO", opciones: ["Agitado", "Sereno", "Nervioso", "Ruidoso"], respuesta: 1 }
+        { palabra: "ALEGRE", opciones: ["Triste", "Feliz", "Enojado", "Aburrido"], correcta: 1 },
+        { palabra: "RÁPIDO", opciones: ["Lento", "Veloz", "Pesado", "Débil"], correcta: 1 },
+        { palabra: "GRANDE", opciones: ["Pequeño", "Enorme", "Delgado", "Corto"], correcta: 1 },
+        { palabra: "INTELIGENTE", opciones: ["Tonto", "Sabio", "Torpe", "Lento"], correcta: 1 },
+        { palabra: "HERMOSO", opciones: ["Feo", "Bello", "Sucio", "Viejo"], correcta: 1 },
+        { palabra: "VALIENTE", opciones: ["Cobarde", "Audaz", "Débil", "Perezoso"], correcta: 1 },
+        { palabra: "DIFÍCIL", opciones: ["Fácil", "Complicado", "Simple", "Ligero"], correcta: 1 },
+        { palabra: "FUERTE", opciones: ["Débil", "Poderoso", "Flaco", "Pequeño"], correcta: 1 },
+        { palabra: "BRILLANTE", opciones: ["Opaco", "Luminoso", "Oscuro", "Mate"], correcta: 1 },
+        { palabra: "ANTIGUO", opciones: ["Moderno", "Viejo", "Nuevo", "Reciente"], correcta: 1 },
+        { palabra: "LIMPIO", opciones: ["Sucio", "Pulcro", "Manchado", "Grasoso"], correcta: 1 },
+        { palabra: "TRANQUILO", opciones: ["Agitado", "Sereno", "Nervioso", "Ruidoso"], correcta: 1 }
     ],
     antonimos: [
-        { palabra: "ALTO", opciones: ["Grande", "Bajo", "Ancho", "Largo"], respuesta: 1 },
-        { palabra: "CALIENTE", opciones: ["Tibio", "Frío", "Templado", "Húmedo"], respuesta: 1 },
-        { palabra: "SUBIR", opciones: ["Elevar", "Bajar", "Trepar", "Ascender"], respuesta: 1 },
-        { palabra: "ENTRAR", opciones: ["Ingresar", "Salir", "Acceder", "Penetrar"], respuesta: 1 },
-        { palabra: "COMPRAR", opciones: ["Adquirir", "Vender", "Obtener", "Ganar"], respuesta: 1 },
-        { palabra: "RECORDAR", opciones: ["Memorizar", "Olvidar", "Pensar", "Aprender"], respuesta: 1 },
-        { palabra: "LLORAR", opciones: ["Sollozar", "Reír", "Lamentar", "Sufrir"], respuesta: 1 },
-        { palabra: "CLARO", opciones: ["Evidente", "Oscuro", "Brillante", "Limpio"], respuesta: 1 },
-        { palabra: "AMOR", opciones: ["Cariño", "Odio", "Afecto", "Pasión"], respuesta: 1 },
-        { palabra: "PRINCIPIO", opciones: ["Inicio", "Final", "Origen", "Comienzo"], respuesta: 1 },
-        { palabra: "VERDAD", opciones: ["Realidad", "Mentira", "Certeza", "Honestidad"], respuesta: 1 },
-        { palabra: "UNIR", opciones: ["Juntar", "Separar", "Mezclar", "Conectar"], respuesta: 1 }
+        { palabra: "ALTO", opciones: ["Grande", "Bajo", "Ancho", "Largo"], correcta: 1 },
+        { palabra: "CALIENTE", opciones: ["Tibio", "Frío", "Templado", "Húmedo"], correcta: 1 },
+        { palabra: "SUBIR", opciones: ["Elevar", "Bajar", "Trepar", "Ascender"], correcta: 1 },
+        { palabra: "ENTRAR", opciones: ["Ingresar", "Salir", "Acceder", "Penetrar"], correcta: 1 },
+        { palabra: "COMPRAR", opciones: ["Adquirir", "Vender", "Obtener", "Ganar"], correcta: 1 },
+        { palabra: "RECORDAR", opciones: ["Memorizar", "Olvidar", "Pensar", "Aprender"], correcta: 1 },
+        { palabra: "LLORAR", opciones: ["Sollozar", "Reír", "Lamentar", "Sufrir"], correcta: 1 },
+        { palabra: "CLARO", opciones: ["Evidente", "Oscuro", "Brillante", "Limpio"], correcta: 1 },
+        { palabra: "AMOR", opciones: ["Cariño", "Odio", "Afecto", "Pasión"], correcta: 1 },
+        { palabra: "PRINCIPIO", opciones: ["Inicio", "Final", "Origen", "Comienzo"], correcta: 1 },
+        { palabra: "VERDAD", opciones: ["Realidad", "Mentira", "Certeza", "Honestidad"], correcta: 1 },
+        { palabra: "UNIR", opciones: ["Juntar", "Separar", "Mezclar", "Conectar"], correcta: 1 }
     ],
     analogias: [
-        { pregunta: "PERRO es a LADRAR como GATO es a:", opciones: ["Correr", "Maullar", "Dormir", "Comer"], respuesta: 1 },
-        { pregunta: "LÁPIZ es a ESCRIBIR como TIJERA es a:", opciones: ["Pegar", "Cortar", "Doblar", "Pintar"], respuesta: 1 },
-        { pregunta: "DÍA es a NOCHE como BLANCO es a:", opciones: ["Gris", "Negro", "Claro", "Azul"], respuesta: 1 },
-        { pregunta: "LIBRO es a LEER como MÚSICA es a:", opciones: ["Ver", "Escuchar", "Tocar", "Cantar"], respuesta: 1 },
-        { pregunta: "MÉDICO es a HOSPITAL como PROFESOR es a:", opciones: ["Oficina", "Escuela", "Casa", "Parque"], respuesta: 1 },
-        { pregunta: "AVE es a VOLAR como PEZ es a:", opciones: ["Correr", "Saltar", "Nadar", "Caminar"], respuesta: 2 },
-        { pregunta: "HAMBRE es a COMER como SED es a:", opciones: ["Dormir", "Jugar", "Beber", "Descansar"], respuesta: 2 },
-        { pregunta: "FRÍO es a INVIERNO como CALOR es a:", opciones: ["Otoño", "Primavera", "Verano", "Lluvia"], respuesta: 2 },
-        { pregunta: "ZAPATO es a PIE como GUANTE es a:", opciones: ["Brazo", "Cabeza", "Mano", "Pierna"], respuesta: 2 }
+        { pregunta: "PERRO es a LADRAR como GATO es a:", opciones: ["Correr", "Maullar", "Dormir", "Comer"], correcta: 1 },
+        { pregunta: "LÁPIZ es a ESCRIBIR como TIJERA es a:", opciones: ["Pegar", "Cortar", "Doblar", "Pintar"], correcta: 1 },
+        { pregunta: "DÍA es a NOCHE como BLANCO es a:", opciones: ["Gris", "Negro", "Claro", "Azul"], correcta: 1 },
+        { pregunta: "LIBRO es a LEER como MÚSICA es a:", opciones: ["Ver", "Escuchar", "Tocar", "Cantar"], correcta: 1 },
+        { pregunta: "MÉDICO es a HOSPITAL como PROFESOR es a:", opciones: ["Oficina", "Escuela", "Casa", "Parque"], correcta: 1 },
+        { pregunta: "AVE es a VOLAR como PEZ es a:", opciones: ["Correr", "Saltar", "Nadar", "Caminar"], correcta: 2 },
+        { pregunta: "HAMBRE es a COMER como SED es a:", opciones: ["Dormir", "Jugar", "Beber", "Descansar"], correcta: 2 },
+        { pregunta: "FRÍO es a INVIERNO como CALOR es a:", opciones: ["Otoño", "Primavera", "Verano", "Lluvia"], correcta: 2 },
+        { pregunta: "ZAPATO es a PIE como GUANTE es a:", opciones: ["Brazo", "Cabeza", "Mano", "Pierna"], correcta: 2 }
     ],
     oraciones: [
-        { texto: "El ___ brilla en el cielo durante el día.", opciones: ["luna", "sol", "estrella", "planeta"], respuesta: 1 },
-        { texto: "Los ___ vuelan en el cielo.", opciones: ["peces", "pájaros", "perros", "gatos"], respuesta: 1 },
-        { texto: "Necesito un ___ para cortar el papel.", opciones: ["martillo", "tijera", "pegamento", "regla"], respuesta: 1 },
-        { texto: "El ___ es un animal muy grande que vive en el mar.", opciones: ["ratón", "ballena", "hormiga", "conejo"], respuesta: 1 },
-        { texto: "Uso el ___ para cepillarme los dientes.", opciones: ["peine", "cepillo", "jabón", "champú"], respuesta: 1 },
-        { texto: "La ___ es la comida más importante del día.", opciones: ["cena", "desayuno", "merienda", "lonche"], respuesta: 1 },
-        { texto: "El ___ es el órgano que nos permite pensar.", opciones: ["corazón", "cerebro", "estómago", "pulmón"], respuesta: 1 },
-        { texto: "Necesito ___ para ver mejor de lejos.", opciones: ["audífonos", "lentes", "zapatos", "guantes"], respuesta: 1 }
+        { texto: "El ___ brilla en el cielo durante el día.", opciones: ["luna", "sol", "estrella", "planeta"], correcta: 1 },
+        { texto: "Los ___ vuelan en el cielo.", opciones: ["peces", "pájaros", "perros", "gatos"], correcta: 1 },
+        { texto: "Necesito un ___ para cortar el papel.", opciones: ["martillo", "tijera", "pegamento", "regla"], correcta: 1 },
+        { texto: "El ___ es un animal muy grande que vive en el mar.", opciones: ["ratón", "ballena", "hormiga", "conejo"], correcta: 1 },
+        { texto: "Uso el ___ para cepillarme los dientes.", opciones: ["peine", "cepillo", "jabón", "champú"], correcta: 1 },
+        { texto: "La ___ es la comida más importante del día.", opciones: ["cena", "desayuno", "merienda", "lonche"], correcta: 1 },
+        { texto: "El ___ es el órgano que nos permite pensar.", opciones: ["corazón", "cerebro", "estómago", "pulmón"], correcta: 1 },
+        { texto: "Necesito ___ para ver mejor de lejos.", opciones: ["audífonos", "lentes", "zapatos", "guantes"], correcta: 1 }
     ]
 };
 
 const matematicas = {
     aritmetica: [
-        { problema: "¿Cuánto es 25 + 37?", opciones: ["52", "62", "72", "82"], respuesta: 1 },
-        { problema: "¿Cuánto es 89 - 34?", opciones: ["45", "55", "65", "75"], respuesta: 1 },
-        { problema: "¿Cuánto es 12 × 8?", opciones: ["86", "96", "106", "116"], respuesta: 1 },
-        { problema: "¿Cuánto es 144 ÷ 12?", opciones: ["10", "11", "12", "13"], respuesta: 2 },
-        { problema: "¿Cuánto es 156 + 289?", opciones: ["435", "445", "455", "465"], respuesta: 1 },
-        { problema: "¿Cuánto es 500 - 237?", opciones: ["253", "263", "273", "283"], respuesta: 1 }
+        { problema: "¿Cuánto es 25 + 37?", opciones: ["52", "62", "72", "82"], correcta: 1, explicacion: "25 + 37 = 62. Sumamos las unidades (5+7=12) y las decenas (20+30=50), luego 50+12=62" },
+        { problema: "¿Cuánto es 89 - 34?", opciones: ["45", "55", "65", "75"], correcta: 1, explicacion: "89 - 34 = 55. Restamos las unidades (9-4=5) y las decenas (80-30=50), luego 50+5=55" },
+        { problema: "¿Cuánto es 12 × 8?", opciones: ["86", "96", "106", "116"], correcta: 1, explicacion: "12 × 8 = 96. Podemos hacer 10×8=80 más 2×8=16, entonces 80+16=96" },
+        { problema: "¿Cuánto es 144 ÷ 12?", opciones: ["10", "11", "12", "13"], correcta: 2, explicacion: "144 ÷ 12 = 12. Preguntamos: ¿cuántas veces cabe el 12 en 144? La respuesta es 12 veces" },
+        { problema: "¿Cuánto es 156 + 289?", opciones: ["435", "445", "455", "465"], correcta: 1, explicacion: "156 + 289 = 445. Sumamos: 6+9=15 (llevamos 1), 5+8+1=14 (llevamos 1), 1+2+1=4" },
+        { problema: "¿Cuánto es 500 - 237?", opciones: ["253", "263", "273", "283"], correcta: 1, explicacion: "500 - 237 = 263. Restamos: 0-7 no se puede, pedimos prestado: 10-7=3, 9-3=6, 4-2=2" }
     ],
     fracciones: [
-        { problema: "¿Cuánto es 1/2 + 1/4?", opciones: ["2/4", "3/4", "4/4", "1/2"], respuesta: 1 },
-        { problema: "¿Cuánto es 3/5 - 1/5?", opciones: ["1/5", "2/5", "3/5", "4/5"], respuesta: 1 },
-        { problema: "Si comes 1/4 de una pizza, ¿qué fracción queda?", opciones: ["1/4", "2/4", "3/4", "4/4"], respuesta: 2 },
-        { problema: "¿Qué fracción es equivalente a 2/4?", opciones: ["1/2", "1/3", "2/3", "3/4"], respuesta: 0 }
+        { problema: "¿Cuánto es 1/2 + 1/4?", opciones: ["2/4", "3/4", "4/4", "1/2"], correcta: 1, explicacion: "1/2 = 2/4, entonces 2/4 + 1/4 = 3/4" },
+        { problema: "¿Cuánto es 3/5 - 1/5?", opciones: ["1/5", "2/5", "3/5", "4/5"], correcta: 1, explicacion: "Como tienen el mismo denominador, restamos los numeradores: 3-1=2, respuesta: 2/5" },
+        { problema: "Si comes 1/4 de una pizza, ¿qué fracción queda?", opciones: ["1/4", "2/4", "3/4", "4/4"], correcta: 2, explicacion: "La pizza entera es 4/4. Si comes 1/4, queda 4/4 - 1/4 = 3/4" },
+        { problema: "¿Qué fracción es equivalente a 2/4?", opciones: ["1/2", "1/3", "2/3", "3/4"], correcta: 0, explicacion: "Si dividimos numerador y denominador entre 2: 2÷2=1 y 4÷2=2, entonces 2/4 = 1/2" }
     ],
     geometria: [
-        { problema: "¿Cuántos lados tiene un triángulo?", opciones: ["2", "3", "4", "5"], respuesta: 1 },
-        { problema: "¿Cuántos lados tiene un cuadrado?", opciones: ["3", "4", "5", "6"], respuesta: 1 },
-        { problema: "Si un rectángulo mide 5 cm de largo y 3 cm de ancho, ¿cuál es su perímetro?", opciones: ["13 cm", "15 cm", "16 cm", "18 cm"], respuesta: 2 },
-        { problema: "¿Cuántos grados tiene un ángulo recto?", opciones: ["45°", "60°", "90°", "180°"], respuesta: 2 }
+        { problema: "¿Cuántos lados tiene un triángulo?", opciones: ["2", "3", "4", "5"], correcta: 1, explicacion: "Un triángulo tiene 3 lados y 3 ángulos. Tri- significa tres" },
+        { problema: "¿Cuántos lados tiene un cuadrado?", opciones: ["3", "4", "5", "6"], correcta: 1, explicacion: "Un cuadrado tiene 4 lados iguales y 4 ángulos rectos de 90°" },
+        { problema: "Si un rectángulo mide 5 cm de largo y 3 cm de ancho, ¿cuál es su perímetro?", opciones: ["13 cm", "15 cm", "16 cm", "18 cm"], correcta: 2, explicacion: "Perímetro = suma de todos los lados = 5+3+5+3 = 16 cm" },
+        { problema: "¿Cuántos grados tiene un ángulo recto?", opciones: ["45°", "60°", "90°", "180°"], correcta: 2, explicacion: "Un ángulo recto mide exactamente 90°, como las esquinas de un cuadrado" }
     ],
     problemas: [
-        { problema: "María tiene 15 caramelos y le regala 6 a su hermano. ¿Cuántos le quedan?", opciones: ["7", "8", "9", "10"], respuesta: 2 },
-        { problema: "Un libro cuesta S/. 25 y un cuaderno S/. 8. ¿Cuánto pagas por ambos?", opciones: ["S/. 30", "S/. 32", "S/. 33", "S/. 35"], respuesta: 2 },
-        { problema: "Juan tiene 3 cajas con 12 lápices cada una. ¿Cuántos lápices tiene en total?", opciones: ["30", "33", "36", "39"], respuesta: 2 },
-        { problema: "Si 4 amigos comparten 20 galletas en partes iguales, ¿cuántas recibe cada uno?", opciones: ["4", "5", "6", "7"], respuesta: 1 }
+        { problema: "María tiene 15 caramelos y le regala 6 a su hermano. ¿Cuántos le quedan?", opciones: ["7", "8", "9", "10"], correcta: 2, explicacion: "Es una resta: 15 - 6 = 9 caramelos le quedan a María" },
+        { problema: "Un libro cuesta S/. 25 y un cuaderno S/. 8. ¿Cuánto pagas por ambos?", opciones: ["S/. 30", "S/. 32", "S/. 33", "S/. 35"], correcta: 2, explicacion: "Es una suma: 25 + 8 = 33 soles en total" },
+        { problema: "Juan tiene 3 cajas con 12 lápices cada una. ¿Cuántos lápices tiene en total?", opciones: ["30", "33", "36", "39"], correcta: 2, explicacion: "Es una multiplicación: 3 × 12 = 36 lápices en total" },
+        { problema: "Si 4 amigos comparten 20 galletas en partes iguales, ¿cuántas recibe cada uno?", opciones: ["4", "5", "6", "7"], correcta: 1, explicacion: "Es una división: 20 ÷ 4 = 5 galletas para cada amigo" }
     ]
 };
 
@@ -260,16 +261,96 @@ const dictados = [
 ];
 
 const insignias = [
-    { id: 1, nombre: "Primera Lectura", descripcion: "Completaste tu primera lectura", icono: "📖", requerido: 1 },
-    { id: 2, nombre: "Lector Avanzado", descripcion: "Completaste 3 lecturas", icono: "📚", requerido: 3 },
-    { id: 3, nombre: "Maestro de Lecturas", descripcion: "Completaste todas las lecturas", icono: "🏆", requerido: 6 },
-    { id: 4, nombre: "Experto en Palabras", descripcion: "Completaste 10 ejercicios de razonamiento verbal", icono: "💭", requerido: 10 },
-    { id: 5, nombre: "Matemático Novato", descripcion: "Resolviste 5 problemas matemáticos", icono: "🔢", requerido: 5 },
-    { id: 6, nombre: "Genio Matemático", descripcion: "Resolviste 20 problemas matemáticos", icono: "🧮", requerido: 20 },
-    { id: 7, nombre: "Primer Dictado", descripcion: "Completaste tu primer dictado", icono: "✍️", requerido: 1 },
-    { id: 8, nombre: "Escritor Experto", descripcion: "Completaste 5 dictados", icono: "📝", requerido: 5 },
-    { id: 9, nombre: "Estrella Ascendente", descripcion: "Alcanzaste 100 puntos", icono: "⭐", requerido: 100 },
-    { id: 10, nombre: "Super Estudiante", descripcion: "Alcanzaste 500 puntos", icono: "🌟", requerido: 500 },
-    { id: 11, nombre: "Campeón del Conocimiento", descripcion: "Alcanzaste 1000 puntos", icono: "🏅", requerido: 1000 },
-    { id: 12, nombre: "Leyenda", descripcion: "Completaste toda la aplicación", icono: "👑", requerido: 999 }
+    { 
+        id: 1, 
+        nombre: "Primera Lectura", 
+        descripcion: "Completaste tu primera lectura", 
+        icono: "📖", 
+        requisito: { tipo: 'lecturas', cantidad: 1 }
+    },
+    { 
+        id: 2, 
+        nombre: "Lector Avanzado", 
+        descripcion: "Completaste 3 lecturas", 
+        icono: "📚", 
+        requisito: { tipo: 'lecturas', cantidad: 3 }
+    },
+    { 
+        id: 3, 
+        nombre: "Maestro de Lecturas", 
+        descripcion: "Completaste todas las lecturas", 
+        icono: "🏆", 
+        requisito: { tipo: 'lecturas', cantidad: 6 }
+    },
+    { 
+        id: 4, 
+        nombre: "Experto en Palabras", 
+        descripcion: "Completaste 10 ejercicios de razonamiento verbal", 
+        icono: "💭", 
+        requisito: { tipo: 'razonamiento', cantidad: 10 }
+    },
+    { 
+        id: 5, 
+        nombre: "Matemático Novato", 
+        descripcion: "Resolviste 5 problemas matemáticos", 
+        icono: "🔢", 
+        requisito: { tipo: 'matematicas', cantidad: 5 }
+    },
+    { 
+        id: 6, 
+        nombre: "Genio Matemático", 
+        descripcion: "Resolviste 20 problemas matemáticos", 
+        icono: "🧮", 
+        requisito: { tipo: 'matematicas', cantidad: 20 }
+    },
+    { 
+        id: 7, 
+        nombre: "Primer Dictado", 
+        descripcion: "Completaste tu primer dictado", 
+        icono: "✍️", 
+        requisito: { tipo: 'dictados', cantidad: 1 }
+    },
+    { 
+        id: 8, 
+        nombre: "Escritor Experto", 
+        descripcion: "Completaste 5 dictados", 
+        icono: "📝", 
+        requisito: { tipo: 'dictados', cantidad: 5 }
+    },
+    { 
+        id: 9, 
+        nombre: "Perfeccionista", 
+        descripcion: "Obtén 90% de respuestas correctas", 
+        icono: "⭐", 
+        requisito: { tipo: 'promedio', cantidad: 90 }
+    },
+    { 
+        id: 10, 
+        nombre: "Super Estudiante", 
+        descripcion: "Obtén 95% de respuestas correctas", 
+        icono: "🌟", 
+        requisito: { tipo: 'promedio', cantidad: 95 }
+    },
+    { 
+        id: 11, 
+        nombre: "Campeón del Conocimiento", 
+        descripcion: "Completa al menos un ejercicio de cada tipo", 
+        icono: "🏅", 
+        requisito: { tipo: 'completo', cantidad: 1 }
+    },
+    { 
+        id: 12, 
+        nombre: "Leyenda", 
+        descripcion: "Completa todos los ejercicios disponibles", 
+        icono: "👑", 
+        requisito: { tipo: 'completo', cantidad: 999 }
+    }
 ];
+
+// Objeto unificado para toda la aplicación
+const contenidoEducativo = {
+    lecturas: lecturas,
+    razonamiento: razonamientoVerbal,
+    matematicas: matematicas,
+    dictados: dictados
+};

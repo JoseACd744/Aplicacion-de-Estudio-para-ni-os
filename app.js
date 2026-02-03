@@ -1,594 +1,636 @@
-// App.js - Lógica principal de la aplicación educativa
-
 // Variables globales
+let lecturaActual = 0;
+let dictadoActual = 0;
+let actividadActual = null;
+let ejercicioActual = 0;
+let respuestasUsuario = {};
+let matematicasTipo = null;
+
+// Estadísticas
 let estadisticas = {
-    puntos: 0,
     lecturasCompletadas: 0,
-    ejerciciosVerbalesCompletados: 0,
-    problemasMatematicosCompletados: 0,
-    dictadosCompletados: 0,
-    insigniasObtenidas: [],
-    historialLecturas: [],
-    historialVerbal: [],
-    historialMatematicas: [],
-    historialDictados: []
+    razonamientoCompletado: 0,
+    dictadosRealizados: 0,
+    matematicasCompletadas: 0,
+    totalCorrectas: 0,
+    totalPreguntas: 0,
+    puntosTotales: 0,
+    insigniasObtenidas: []
 };
 
-let pantallaActual = 'menu';
-let lecturaActual = null;
-let ejercicioActual = null;
-let dictadoActual = null;
-
-// Inicialización de la aplicación
-document.addEventListener('DOMContentLoaded', function() {
-    cargarEstadisticas();
-    mostrarPantalla('menu');
-    actualizarEstadisticas();
-    
-    // Event listeners
-    document.getElementById('btn-lecturas').addEventListener('click', () => mostrarListaLecturas());
-    document.getElementById('btn-verbal').addEventListener('click', () => mostrarMenuVerbal());
-    document.getElementById('btn-matematicas').addEventListener('click', () => mostrarMenuMatematicas());
-    document.getElementById('btn-dictado').addEventListener('click', () => mostrarListaDictados());
-    document.getElementById('btn-insignias').addEventListener('click', () => mostrarInsignias());
-    document.getElementById('btn-estadisticas').addEventListener('click', () => mostrarEstadisticas());
-    
-    // Botones de navegación
-    document.querySelectorAll('.btn-volver').forEach(btn => {
-        btn.addEventListener('click', () => mostrarPantalla('menu'));
-    });
-    
-    // Registro del Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js');
-    }
-});
-
-// Sistema de navegación
-function mostrarPantalla(pantalla) {
-    document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-    const pantallaElement = document.getElementById(`pantalla-${pantalla}`);
-    if (pantallaElement) {
-        pantallaElement.classList.add('activa');
-        pantallaActual = pantalla;
+// Cargar estadísticas guardadas
+function cargarEstadisticas() {
+    const stats = localStorage.getItem('estadisticas');
+    if (stats) {
+        estadisticas = JSON.parse(stats);
+        actualizarPantallaProgreso();
     }
 }
 
-// Funciones de Lecturas
-function mostrarListaLecturas() {
-    const container = document.getElementById('lista-lecturas');
-    container.innerHTML = '';
-    
-    lecturas.forEach(lectura => {
-        const completada = estadisticas.historialLecturas.includes(lectura.id);
-        const card = document.createElement('div');
-        card.className = 'lectura-card';
-        card.innerHTML = `
-            <h3>${lectura.titulo} ${completada ? '✓' : ''}</h3>
-            <button onclick="iniciarLectura(${lectura.id})">Leer</button>
-        `;
-        container.appendChild(card);
-    });
-    
-    mostrarPantalla('lecturas');
+// Guardar estadísticas
+function guardarEstadisticas() {
+    localStorage.setItem('estadisticas', JSON.stringify(estadisticas));
+    actualizarPantallaProgreso();
 }
 
-function iniciarLectura(id) {
-    lecturaActual = lecturas.find(l => l.id === id);
-    const container = document.getElementById('contenido-lectura');
+// Navegación entre pantallas
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    document.getElementById(screenId).classList.add('active');
     
-    container.innerHTML = `
-        <h2>${lecturaActual.titulo}</h2>
-        <p class="texto-lectura">${lecturaActual.texto}</p>
-        <div id="preguntas-lectura"></div>
+    // Inicializar contenido según la pantalla
+    if (screenId === 'lectura-screen') {
+        cargarLectura();
+    } else if (screenId === 'dictado-screen') {
+        inicializarDictado();
+    } else if (screenId === 'progreso-screen') {
+        actualizarPantallaProgreso();
+    }
+}
+
+// ==================== COMPRENSIÓN LECTORA ====================
+
+function cargarLectura() {
+    const lectura = contenidoEducativo.lecturas[lecturaActual];
+    respuestasUsuario = {};
+    
+    // Mostrar texto
+    const textoDiv = document.getElementById('lectura-texto');
+    textoDiv.innerHTML = `
+        <h3>${lectura.titulo}</h3>
+        <p>${lectura.texto.replace(/\n\n/g, '</p><p>')}</p>
     `;
     
-    mostrarPreguntasLectura();
-    mostrarPantalla('lectura-detalle');
-}
-
-function mostrarPreguntasLectura() {
-    const container = document.getElementById('preguntas-lectura');
-    container.innerHTML = '<h3>Preguntas de Comprensión</h3>';
+    // Mostrar preguntas
+    const preguntasDiv = document.getElementById('lectura-preguntas');
+    preguntasDiv.innerHTML = '';
     
-    lecturaActual.preguntas.forEach((pregunta, index) => {
+    lectura.preguntas.forEach((pregunta, index) => {
         const preguntaDiv = document.createElement('div');
         preguntaDiv.className = 'pregunta';
         preguntaDiv.innerHTML = `
-            <p><strong>${index + 1}. ${pregunta.pregunta}</strong></p>
-            ${pregunta.opciones.map((opcion, i) => `
-                <button class="opcion" onclick="verificarRespuestaLectura(${index}, ${i})">${opcion}</button>
-            `).join('')}
-            <div id="resultado-${index}" class="resultado"></div>
+            <h4>${index + 1}. ${pregunta.pregunta}</h4>
+            <div class="opciones">
+                ${pregunta.opciones.map((opcion, i) => `
+                    <label class="opcion">
+                        <input type="radio" name="pregunta${index}" value="${i}">
+                        <span>${opcion}</span>
+                    </label>
+                `).join('')}
+            </div>
         `;
-        container.appendChild(preguntaDiv);
+        preguntasDiv.appendChild(preguntaDiv);
     });
+    
+    // Mostrar botón verificar
+    document.getElementById('btn-verificar-lectura').style.display = 'block';
+    document.getElementById('lectura-resultado').style.display = 'none';
+    document.getElementById('btn-siguiente-lectura').style.display = 'none';
+    
+    // Event listener para verificar
+    document.getElementById('btn-verificar-lectura').onclick = verificarLectura;
 }
 
-function verificarRespuestaLectura(indicePregunta, respuestaSeleccionada) {
-    const pregunta = lecturaActual.preguntas[indicePregunta];
-    const resultadoDiv = document.getElementById(`resultado-${indicePregunta}`);
+function verificarLectura() {
+    const lectura = contenidoEducativo.lecturas[lecturaActual];
+    let correctas = 0;
     
-    if (respuestaSeleccionada === pregunta.respuesta) {
-        resultadoDiv.innerHTML = '<span style="color: green;">✓ ¡Correcto! +10 puntos</span>';
-        estadisticas.puntos += 10;
+    lectura.preguntas.forEach((pregunta, index) => {
+        const seleccionada = document.querySelector(`input[name="pregunta${index}"]:checked`);
+        if (!seleccionada) return;
+        
+        const valorSeleccionado = parseInt(seleccionada.value);
+        const opcionDiv = seleccionada.closest('.opcion');
+        
+        if (valorSeleccionado === pregunta.correcta) {
+            opcionDiv.classList.add('correcta');
+            correctas++;
+        } else {
+            opcionDiv.classList.add('incorrecta');
+            // Marcar la correcta
+            const opciones = document.querySelectorAll(`input[name="pregunta${index}"]`);
+            opciones[pregunta.correcta].closest('.opcion').classList.add('correcta');
+        }
+    });
+    
+    // Actualizar estadísticas
+    estadisticas.totalCorrectas += correctas;
+    estadisticas.totalPreguntas += lectura.preguntas.length;
+    
+    // Mostrar resultado
+    const resultadoDiv = document.getElementById('lectura-resultado');
+    const porcentaje = (correctas / lectura.preguntas.length * 100).toFixed(0);
+    
+    resultadoDiv.className = 'resultado';
+    if (porcentaje >= 75) {
+        resultadoDiv.classList.add('success');
+        resultadoDiv.innerHTML = `
+            <h3>¡Excelente! 🎉</h3>
+            <p>Obtuviste ${correctas} de ${lectura.preguntas.length} respuestas correctas (${porcentaje}%)</p>
+        `;
+    } else if (porcentaje >= 50) {
+        resultadoDiv.classList.add('info');
+        resultadoDiv.innerHTML = `
+            <h3>¡Bien! 👍</h3>
+            <p>Obtuviste ${correctas} de ${lectura.preguntas.length} respuestas correctas (${porcentaje}%)</p>
+            <p>¡Sigue practicando!</p>
+        `;
     } else {
-        resultadoDiv.innerHTML = `<span style="color: red;">✗ Incorrecto. La respuesta correcta es: ${pregunta.opciones[pregunta.respuesta]}</span>`;
+        resultadoDiv.classList.add('error');
+        resultadoDiv.innerHTML = `
+            <h3>Necesitas practicar más 📚</h3>
+            <p>Obtuviste ${correctas} de ${lectura.preguntas.length} respuestas correctas (${porcentaje}%)</p>
+            <p>Lee el texto nuevamente e intenta de nuevo.</p>
+        `;
     }
     
-    // Deshabilitar botones de esta pregunta
-    const preguntaDiv = resultadoDiv.parentElement;
-    preguntaDiv.querySelectorAll('.opcion').forEach(btn => btn.disabled = true);
+    estadisticas.lecturasCompletadas++;
+    estadisticas.puntosTotales += (correctas * 10) + (lectura.preguntas.length - correctas) * 2;
+    guardarEstadisticas();
+    verificarInsignias();
     
-    // Verificar si completó todas las preguntas
-    if (indicePregunta === lecturaActual.preguntas.length - 1) {
-        setTimeout(() => {
-            if (!estadisticas.historialLecturas.includes(lecturaActual.id)) {
-                estadisticas.lecturasCompletadas++;
-                estadisticas.historialLecturas.push(lecturaActual.id);
-            }
-            verificarInsignias();
-            guardarEstadisticas();
-            actualizarEstadisticas();
-        }, 1000);
-    }
+    // Ocultar botón verificar y mostrar siguiente
+    document.getElementById('btn-verificar-lectura').style.display = 'none';
+    document.getElementById('btn-siguiente-lectura').style.display = 'block';
+    document.getElementById('btn-siguiente-lectura').onclick = siguienteLectura;
 }
 
-// Funciones de Razonamiento Verbal
-function mostrarMenuVerbal() {
-    mostrarPantalla('menu-verbal');
+function siguienteLectura() {
+    lecturaActual = (lecturaActual + 1) % contenidoEducativo.lecturas.length;
+    cargarLectura();
 }
 
-function iniciarEjercicio(tipo) {
-    let ejercicios;
-    let titulo;
+// ==================== RAZONAMIENTO VERBAL ====================
+
+function iniciarActividad(tipo) {
+    actividadActual = tipo;
+    ejercicioActual = 0;
+    const contenidoDiv = document.getElementById('razonamiento-contenido');
+    contenidoDiv.innerHTML = '';
     
     switch(tipo) {
         case 'sinonimos':
-            ejercicios = razonamientoVerbal.sinonimos;
-            titulo = 'Sinónimos';
+            cargarEjercicioSinonimos();
             break;
         case 'antonimos':
-            ejercicios = razonamientoVerbal.antonimos;
-            titulo = 'Antónimos';
+            cargarEjercicioAntonimos();
             break;
         case 'analogias':
-            ejercicios = razonamientoVerbal.analogias;
-            titulo = 'Analogías';
+            cargarEjercicioAnalogias();
             break;
         case 'oraciones':
-            ejercicios = razonamientoVerbal.oraciones;
-            titulo = 'Completar Oraciones';
+            cargarEjercicioOraciones();
             break;
     }
-    
-    ejercicioActual = {
-        tipo: tipo,
-        ejercicios: ejercicios,
-        indiceActual: 0,
-        respuestasCorrectas: 0
-    };
-    
-    mostrarEjercicioVerbal(titulo);
 }
 
-function mostrarEjercicioVerbal(titulo) {
-    const container = document.getElementById('contenido-verbal');
-    const ejercicio = ejercicioActual.ejercicios[ejercicioActual.indiceActual];
+function cargarEjercicioSinonimos() {
+    const ejercicio = contenidoEducativo.razonamiento.sinonimos[ejercicioActual];
+    cargarEjercicioRazonamiento('Sinónimos', `Selecciona el SINÓNIMO de: <strong>${ejercicio.palabra}</strong>`, ejercicio);
+}
+
+function cargarEjercicioAntonimos() {
+    const ejercicio = contenidoEducativo.razonamiento.antonimos[ejercicioActual];
+    cargarEjercicioRazonamiento('Antónimos', `Selecciona el ANTÓNIMO de: <strong>${ejercicio.palabra}</strong>`, ejercicio);
+}
+
+function cargarEjercicioAnalogias() {
+    const ejercicio = contenidoEducativo.razonamiento.analogias[ejercicioActual];
+    cargarEjercicioRazonamiento('Analogías', ejercicio.pregunta, ejercicio);
+}
+
+function cargarEjercicioOraciones() {
+    const ejercicio = contenidoEducativo.razonamiento.oraciones[ejercicioActual];
+    cargarEjercicioRazonamiento('Completar Oraciones', ejercicio.oracion, ejercicio);
+}
+
+function cargarEjercicioRazonamiento(titulo, pregunta, ejercicio) {
+    const contenidoDiv = document.getElementById('razonamiento-contenido');
     
-    container.innerHTML = `
-        <h2>${titulo}</h2>
-        <p>Pregunta ${ejercicioActual.indiceActual + 1} de ${ejercicioActual.ejercicios.length}</p>
-        <div class="ejercicio-verbal">
-            <h3>${ejercicio.palabra || ejercicio.pregunta || ejercicio.texto}</h3>
-            <div class="opciones-verbal">
+    const ejercicioHTML = `
+        <div class="ejercicio-razonamiento">
+            <h4>${titulo}</h4>
+            <p style="font-size: 1.1rem; margin: 20px 0;">${pregunta}</p>
+            <div class="opciones">
                 ${ejercicio.opciones.map((opcion, i) => `
-                    <button class="opcion" onclick="verificarRespuestaVerbal(${i})">${opcion}</button>
+                    <label class="opcion">
+                        <input type="radio" name="ejercicio" value="${i}">
+                        <span>${opcion}</span>
+                    </label>
                 `).join('')}
             </div>
-            <div id="resultado-verbal" class="resultado"></div>
+            <button class="btn-primary" onclick="verificarRazonamiento(${ejercicio.correcta})">Verificar</button>
+            <div id="resultado-razonamiento" class="resultado"></div>
+            <button id="btn-siguiente-razonamiento" class="btn-primary" style="display:none;">Siguiente Ejercicio</button>
         </div>
     `;
     
-    mostrarPantalla('ejercicio-verbal');
+    contenidoDiv.innerHTML = ejercicioHTML;
 }
 
-function verificarRespuestaVerbal(respuestaSeleccionada) {
-    const ejercicio = ejercicioActual.ejercicios[ejercicioActual.indiceActual];
-    const resultadoDiv = document.getElementById('resultado-verbal');
-    
-    if (respuestaSeleccionada === ejercicio.respuesta) {
-        resultadoDiv.innerHTML = '<span style="color: green;">✓ ¡Correcto! +5 puntos</span>';
-        estadisticas.puntos += 5;
-        ejercicioActual.respuestasCorrectas++;
-    } else {
-        resultadoDiv.innerHTML = `<span style="color: red;">✗ Incorrecto. La respuesta correcta es: ${ejercicio.opciones[ejercicio.respuesta]}</span>`;
+function verificarRazonamiento(correcta) {
+    const seleccionada = document.querySelector('input[name="ejercicio"]:checked');
+    if (!seleccionada) {
+        alert('Por favor selecciona una opción');
+        return;
     }
     
-    // Deshabilitar botones
-    document.querySelectorAll('.opciones-verbal .opcion').forEach(btn => btn.disabled = true);
+    const valorSeleccionado = parseInt(seleccionada.value);
+    const resultadoDiv = document.getElementById('resultado-razonamiento');
     
-    // Mostrar botón siguiente
-    if (ejercicioActual.indiceActual < ejercicioActual.ejercicios.length - 1) {
-        resultadoDiv.innerHTML += '<br><button onclick="siguienteEjercicioVerbal()">Siguiente</button>';
+    // Actualizar estadísticas
+    estadisticas.totalPreguntas++;
+    
+    if (valorSeleccionado === correcta) {
+        seleccionada.closest('.opcion').classList.add('correcta');
+        resultadoDiv.className = 'resultado success';
+        resultadoDiv.innerHTML = '¡Correcto! ✅';
+        estadisticas.totalCorrectas++;
+        estadisticas.puntosTotales += 10;
     } else {
-        resultadoDiv.innerHTML += '<br><button onclick="finalizarEjercicioVerbal()">Finalizar</button>';
+        seleccionada.closest('.opcion').classList.add('incorrecta');
+        const opciones = document.querySelectorAll('input[name="ejercicio"]');
+        opciones[correcta].closest('.opcion').classList.add('correcta');
+        resultadoDiv.className = 'resultado error';
+        resultadoDiv.innerHTML = 'Incorrecto. La respuesta correcta está marcada en verde.';
+        estadisticas.puntosTotales += 3;
     }
-}
-
-function siguienteEjercicioVerbal() {
-    ejercicioActual.indiceActual++;
-    mostrarEjercicioVerbal(ejercicioActual.tipo);
-}
-
-function finalizarEjercicioVerbal() {
-    estadisticas.ejerciciosVerbalesCompletados++;
-    estadisticas.historialVerbal.push({
-        tipo: ejercicioActual.tipo,
-        correctas: ejercicioActual.respuestasCorrectas,
-        total: ejercicioActual.ejercicios.length
+    
+    estadisticas.razonamientoCompletado++;
+    guardarEstadisticas();
+    verificarInsignias();
+    
+    // Deshabilitar opciones
+    document.querySelectorAll('input[name="ejercicio"]').forEach(input => {
+        input.disabled = true;
     });
     
-    alert(`¡Ejercicio completado!\nRespuestas correctas: ${ejercicioActual.respuestasCorrectas}/${ejercicioActual.ejercicios.length}`);
-    
-    verificarInsignias();
-    guardarEstadisticas();
-    actualizarEstadisticas();
-    mostrarPantalla('menu-verbal');
+    // Mostrar botón siguiente
+    document.querySelector('.ejercicio-razonamiento .btn-primary').style.display = 'none';
+    document.getElementById('btn-siguiente-razonamiento').style.display = 'block';
+    document.getElementById('btn-siguiente-razonamiento').onclick = siguienteEjercicioRazonamiento;
 }
 
-// Funciones de Matemáticas
-function mostrarMenuMatematicas() {
-    mostrarPantalla('menu-matematicas');
-}
-
-function iniciarMatematicas(categoria) {
-    let problemas;
-    let titulo;
-    
-    switch(categoria) {
-        case 'aritmetica':
-            problemas = matematicas.aritmetica;
-            titulo = 'Aritmética';
+function siguienteEjercicioRazonamiento() {
+    let arrayEjercicios;
+    switch(actividadActual) {
+        case 'sinonimos':
+            arrayEjercicios = contenidoEducativo.razonamiento.sinonimos;
             break;
-        case 'fracciones':
-            problemas = matematicas.fracciones;
-            titulo = 'Fracciones';
+        case 'antonimos':
+            arrayEjercicios = contenidoEducativo.razonamiento.antonimos;
             break;
-        case 'geometria':
-            problemas = matematicas.geometria;
-            titulo = 'Geometría';
+        case 'analogias':
+            arrayEjercicios = contenidoEducativo.razonamiento.analogias;
             break;
-        case 'problemas':
-            problemas = matematicas.problemas;
-            titulo = 'Problemas';
+        case 'oraciones':
+            arrayEjercicios = contenidoEducativo.razonamiento.oraciones;
             break;
     }
     
-    ejercicioActual = {
-        tipo: categoria,
-        ejercicios: problemas,
-        indiceActual: 0,
-        respuestasCorrectas: 0
+    ejercicioActual = (ejercicioActual + 1) % arrayEjercicios.length;
+    iniciarActividad(actividadActual);
+}
+
+// ==================== MATEMÁTICAS ====================
+
+function iniciarMatematicas(tipo) {
+    matematicasTipo = tipo;
+    ejercicioActual = 0;
+    cargarEjercicioMatematicas();
+}
+
+function cargarEjercicioMatematicas() {
+    const ejercicios = contenidoEducativo.matematicas[matematicasTipo];
+    const ejercicio = ejercicios[ejercicioActual];
+    const contenidoDiv = document.getElementById('matematicas-contenido');
+    
+    const tipoNombre = {
+        'aritmetica': 'Aritmética',
+        'fracciones': 'Fracciones',
+        'geometria': 'Geometría',
+        'problemas': 'Problemas'
     };
     
-    mostrarProblemaMatematico(titulo);
-}
-
-function mostrarProblemaMatematico(titulo) {
-    const container = document.getElementById('contenido-matematicas');
-    const problema = ejercicioActual.ejercicios[ejercicioActual.indiceActual];
-    
-    container.innerHTML = `
-        <h2>${titulo}</h2>
-        <p>Problema ${ejercicioActual.indiceActual + 1} de ${ejercicioActual.ejercicios.length}</p>
-        <div class="problema-matematico">
-            <h3>${problema.problema}</h3>
-            <div class="opciones-matematicas">
-                ${problema.opciones.map((opcion, i) => `
-                    <button class="opcion" onclick="verificarRespuestaMatematicas(${i})">${opcion}</button>
+    const ejercicioHTML = `
+        <div class="ejercicio-razonamiento">
+            <h4>${tipoNombre[matematicasTipo]}</h4>
+            <p style="font-size: 1.1rem; margin: 20px 0; line-height: 1.6;">${ejercicio.problema}</p>
+            <div class="opciones">
+                ${ejercicio.opciones.map((opcion, i) => `
+                    <label class="opcion">
+                        <input type="radio" name="ejercicio-mat" value="${i}">
+                        <span>${opcion}</span>
+                    </label>
                 `).join('')}
             </div>
+            <button class="btn-primary" onclick="verificarMatematicas(${ejercicio.correcta})">Verificar</button>
             <div id="resultado-matematicas" class="resultado"></div>
+            <button id="btn-siguiente-matematicas" class="btn-primary" style="display:none;">Siguiente Ejercicio</button>
         </div>
     `;
     
-    mostrarPantalla('ejercicio-matematicas');
+    contenidoDiv.innerHTML = ejercicioHTML;
 }
 
-function verificarRespuestaMatematicas(respuestaSeleccionada) {
-    const problema = ejercicioActual.ejercicios[ejercicioActual.indiceActual];
-    const resultadoDiv = document.getElementById('resultado-matematicas');
-    
-    if (respuestaSeleccionada === problema.respuesta) {
-        resultadoDiv.innerHTML = '<span style="color: green;">✓ ¡Correcto! +8 puntos</span>';
-        estadisticas.puntos += 8;
-        ejercicioActual.respuestasCorrectas++;
-    } else {
-        resultadoDiv.innerHTML = `<span style="color: red;">✗ Incorrecto. La respuesta correcta es: ${problema.opciones[problema.respuesta]}</span>`;
+function verificarMatematicas(correcta) {
+    const seleccionada = document.querySelector('input[name="ejercicio-mat"]:checked');
+    if (!seleccionada) {
+        alert('Por favor selecciona una opción');
+        return;
     }
     
-    // Deshabilitar botones
-    document.querySelectorAll('.opciones-matematicas .opcion').forEach(btn => btn.disabled = true);
+    const valorSeleccionado = parseInt(seleccionada.value);
+    const resultadoDiv = document.getElementById('resultado-matematicas');
+    const ejercicio = contenidoEducativo.matematicas[matematicasTipo][ejercicioActual];
+    
+    // Actualizar estadísticas
+    estadisticas.totalPreguntas++;
+    
+    if (valorSeleccionado === correcta) {
+        seleccionada.closest('.opcion').classList.add('correcta');
+        resultadoDiv.className = 'resultado success';
+        resultadoDiv.innerHTML = `
+            <h3>¡Correcto! ✅</h3>
+            <p>${ejercicio.explicacion}</p>
+        `;
+        estadisticas.totalCorrectas++;
+        estadisticas.puntosTotales += 10;
+    } else {
+        seleccionada.closest('.opcion').classList.add('incorrecta');
+        const opciones = document.querySelectorAll('input[name="ejercicio-mat"]');
+        opciones[correcta].closest('.opcion').classList.add('correcta');
+        resultadoDiv.className = 'resultado error';
+        resultadoDiv.innerHTML = `
+            <h3>Incorrecto ❌</h3>
+            <p>La respuesta correcta está marcada en verde.</p>
+            <p><strong>Explicación:</strong> ${ejercicio.explicacion}</p>
+        `;
+        estadisticas.puntosTotales += 3;
+    }
+    
+    estadisticas.matematicasCompletadas++;
+    guardarEstadisticas();
+    verificarInsignias();
+    
+    // Deshabilitar opciones
+    document.querySelectorAll('input[name="ejercicio-mat"]').forEach(input => {
+        input.disabled = true;
+    });
     
     // Mostrar botón siguiente
-    if (ejercicioActual.indiceActual < ejercicioActual.ejercicios.length - 1) {
-        resultadoDiv.innerHTML += '<br><button onclick="siguienteProblemaMatematico()">Siguiente</button>';
-    } else {
-        resultadoDiv.innerHTML += '<br><button onclick="finalizarMatematicas()">Finalizar</button>';
-    }
+    document.querySelector('.ejercicio-razonamiento .btn-primary').style.display = 'none';
+    document.getElementById('btn-siguiente-matematicas').style.display = 'block';
+    document.getElementById('btn-siguiente-matematicas').onclick = siguienteEjercicioMatematicas;
 }
 
-function siguienteProblemaMatematico() {
-    ejercicioActual.indiceActual++;
-    mostrarProblemaMatematico(ejercicioActual.tipo);
+function siguienteEjercicioMatematicas() {
+    const ejercicios = contenidoEducativo.matematicas[matematicasTipo];
+    ejercicioActual = (ejercicioActual + 1) % ejercicios.length;
+    cargarEjercicioMatematicas();
 }
 
-function finalizarMatematicas() {
-    estadisticas.problemasMatematicosCompletados += ejercicioActual.ejercicios.length;
-    estadisticas.historialMatematicas.push({
-        tipo: ejercicioActual.tipo,
-        correctas: ejercicioActual.respuestasCorrectas,
-        total: ejercicioActual.ejercicios.length
-    });
-    
-    alert(`¡Ejercicio completado!\nRespuestas correctas: ${ejercicioActual.respuestasCorrectas}/${ejercicioActual.ejercicios.length}`);
-    
-    verificarInsignias();
-    guardarEstadisticas();
-    actualizarEstadisticas();
-    mostrarPantalla('menu-matematicas');
-}
+// ==================== DICTADOS ====================
 
-// Funciones de Dictado
-function mostrarListaDictados() {
-    const container = document.getElementById('lista-dictados');
-    container.innerHTML = '';
+function inicializarDictado() {
+    const dictado = contenidoEducativo.dictados[dictadoActual];
+    document.getElementById('dictado-texto').value = '';
+    document.getElementById('dictado-resultado').style.display = 'none';
     
-    dictados.forEach(dictado => {
-        const completado = estadisticas.historialDictados.some(d => d.id === dictado.id);
-        const card = document.createElement('div');
-        card.className = 'dictado-card';
-        card.innerHTML = `
-            <h3>Dictado ${dictado.id} ${completado ? '✓' : ''}</h3>
-            <p>Nivel: ${dictado.nivel}</p>
-            <button onclick="iniciarDictado(${dictado.id})">Comenzar</button>
-        `;
-        container.appendChild(card);
-    });
-    
-    mostrarPantalla('dictados');
-}
-
-function iniciarDictado(id) {
-    dictadoActual = dictados.find(d => d.id === id);
-    
-    const container = document.getElementById('contenido-dictado');
-    container.innerHTML = `
-        <h2>Dictado ${dictadoActual.id}</h2>
-        <p>Nivel: ${dictadoActual.nivel}</p>
-        <button id="btn-reproducir" onclick="reproducirDictado()">🔊 Escuchar Dictado</button>
-        <textarea id="respuesta-dictado" placeholder="Escribe aquí lo que escuchaste..." rows="5"></textarea>
-        <button onclick="verificarDictado()">Verificar</button>
-        <div id="resultado-dictado" class="resultado"></div>
-    `;
-    
-    mostrarPantalla('dictado-detalle');
+    document.getElementById('btn-reproducir-dictado').onclick = reproducirDictado;
+    document.getElementById('btn-verificar-dictado').onclick = verificarDictado;
 }
 
 function reproducirDictado() {
+    const dictado = contenidoEducativo.dictados[dictadoActual];
+    
+    // Usar síntesis de voz del navegador
     if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(dictadoActual.texto);
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(dictado.texto);
         utterance.lang = 'es-ES';
         utterance.rate = 0.8;
-        speechSynthesis.speak(utterance);
+        utterance.pitch = 1;
+        
+        window.speechSynthesis.speak(utterance);
+        
+        const btn = document.getElementById('btn-reproducir-dictado');
+        btn.innerHTML = '🔊 Reproduciendo...';
+        btn.disabled = true;
+        
+        utterance.onend = function() {
+            btn.innerHTML = '▶️ Reproducir Dictado';
+            btn.disabled = false;
+        };
     } else {
-        alert('Tu navegador no soporta síntesis de voz. El texto es: ' + dictadoActual.texto);
+        alert('Tu navegador no soporta síntesis de voz. Por favor usa Chrome, Edge o Safari.');
     }
 }
 
 function verificarDictado() {
-    const respuesta = document.getElementById('respuesta-dictado').value.trim().toLowerCase();
-    const textoOriginal = dictadoActual.texto.toLowerCase();
-    const resultadoDiv = document.getElementById('resultado-dictado');
+    const dictado = contenidoEducativo.dictados[dictadoActual];
+    const textoUsuario = document.getElementById('dictado-texto').value.trim();
     
-    // Calcular similitud simple
-    const similitud = calcularSimilitud(respuesta, textoOriginal);
-    
-    if (similitud > 0.8) {
-        resultadoDiv.innerHTML = '<span style="color: green;">✓ ¡Excelente! +15 puntos</span>';
-        estadisticas.puntos += 15;
-        estadisticas.dictadosCompletados++;
-        estadisticas.historialDictados.push({
-            id: dictadoActual.id,
-            similitud: similitud
-        });
-    } else if (similitud > 0.5) {
-        resultadoDiv.innerHTML = '<span style="color: orange;">⚠ Bien, pero puedes mejorar. +7 puntos</span>';
-        estadisticas.puntos += 7;
-        estadisticas.dictadosCompletados++;
-        estadisticas.historialDictados.push({
-            id: dictadoActual.id,
-            similitud: similitud
-        });
-    } else {
-        resultadoDiv.innerHTML = '<span style="color: red;">✗ Intenta de nuevo</span>';
+    if (!textoUsuario) {
+        alert('Por favor escribe el dictado antes de verificar');
+        return;
     }
     
-    resultadoDiv.innerHTML += `<br><p>Texto original: <strong>"${dictadoActual.texto}"</strong></p>`;
-    resultadoDiv.innerHTML += '<br><button onclick="mostrarListaDictados()">Volver a Dictados</button>';
+    // Normalizar textos
+    const textoOriginal = dictado.texto.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
+    const textoEscrito = textoUsuario.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
     
-    verificarInsignias();
-    guardarEstadisticas();
-    actualizarEstadisticas();
-}
-
-function calcularSimilitud(texto1, texto2) {
-    const palabras1 = texto1.split(' ');
-    const palabras2 = texto2.split(' ');
-    let coincidencias = 0;
+    const palabrasOriginales = textoOriginal.split(' ');
+    const palabrasEscritas = textoEscrito.split(' ');
     
-    palabras1.forEach(palabra => {
-        if (palabras2.includes(palabra)) {
-            coincidencias++;
+    let correctas = 0;
+    palabrasOriginales.forEach((palabra, index) => {
+        if (palabrasEscritas[index] === palabra) {
+            correctas++;
         }
     });
     
-    return coincidencias / Math.max(palabras1.length, palabras2.length);
+    const porcentaje = (correctas / palabrasOriginales.length * 100).toFixed(0);
+    const resultadoDiv = document.getElementById('dictado-resultado');
+    
+    // Actualizar estadísticas
+    estadisticas.totalPreguntas++;
+    estadisticas.dictadosRealizados++;
+    
+    let puntos = 0;
+    if (porcentaje >= 90) {
+        puntos = 20;
+        estadisticas.totalCorrectas++;
+    } else if (porcentaje >= 70) {
+        puntos = 10;
+        estadisticas.totalCorrectas += 0.7;
+    } else {
+        puntos = 5;
+    }
+    estadisticas.puntosTotales += puntos;
+    
+    if (porcentaje >= 90) {
+        resultadoDiv.className = 'resultado success';
+        resultadoDiv.innerHTML = `
+            <h3>¡Excelente! 🎉</h3>
+            <p>Precisión: ${porcentaje}%</p>
+            <p><small>Texto original: "${dictado.texto}"</small></p>
+        `;
+    } else if (porcentaje >= 70) {
+        resultadoDiv.className = 'resultado info';
+        resultadoDiv.innerHTML = `
+            <h3>¡Bien! 👍</h3>
+            <p>Precisión: ${porcentaje}%</p>
+            <p>Tienes algunos errores. Revisa la ortografía.</p>
+            <p><small>Texto original: "${dictado.texto}"</small></p>
+        `;
+    } else {
+        resultadoDiv.className = 'resultado error';
+        resultadoDiv.innerHTML = `
+            <h3>Necesitas practicar más 📚</h3>
+            <p>Precisión: ${porcentaje}%</p>
+            <p>Intenta escuchar con más atención.</p>
+            <p><small>Texto original: "${dictado.texto}"</small></p>
+        `;
+    }
+    
+    guardarEstadisticas();
+    verificarInsignias();
+    
+    setTimeout(() => {
+        dictadoActual = (dictadoActual + 1) % contenidoEducativo.dictados.length;
+        inicializarDictado();
+    }, 5000);
 }
 
-// Funciones de Insignias
+// ==================== SISTEMA DE INSIGNIAS ====================
+
+function verificarInsignias() {
+    const promedio = estadisticas.totalPreguntas > 0 
+        ? (estadisticas.totalCorrectas / estadisticas.totalPreguntas * 100)
+        : 0;
+    
+    insignias.forEach(insignia => {
+        if (estadisticas.insigniasObtenidas.includes(insignia.id)) return;
+        
+        let cumpleRequisito = false;
+        
+        switch(insignia.requisito.tipo) {
+            case 'lecturas':
+                cumpleRequisito = estadisticas.lecturasCompletadas >= insignia.requisito.cantidad;
+                break;
+            case 'razonamiento':
+                cumpleRequisito = estadisticas.razonamientoCompletado >= insignia.requisito.cantidad;
+                break;
+            case 'matematicas':
+                cumpleRequisito = estadisticas.matematicasCompletadas >= insignia.requisito.cantidad;
+                break;
+            case 'dictados':
+                cumpleRequisito = estadisticas.dictadosRealizados >= insignia.requisito.cantidad;
+                break;
+            case 'promedio':
+                cumpleRequisito = promedio >= insignia.requisito.cantidad;
+                break;
+            case 'completo':
+                cumpleRequisito = estadisticas.lecturasCompletadas >= 1 && 
+                                estadisticas.razonamientoCompletado >= 1 && 
+                                estadisticas.matematicasCompletadas >= 1 && 
+                                estadisticas.dictadosRealizados >= 1;
+                break;
+        }
+        
+        if (cumpleRequisito) {
+            estadisticas.insigniasObtenidas.push(insignia.id);
+            estadisticas.puntosTotales += 50;
+            mostrarNotificacionInsignia(insignia);
+        }
+    });
+    
+    guardarEstadisticas();
+}
+
+function mostrarNotificacionInsignia(insignia) {
+    const notificacion = document.createElement('div');
+    notificacion.className = 'notificacion-insignia';
+    notificacion.innerHTML = `
+        <div class="insignia-grande">${insignia.icono}</div>
+        <h3>¡Nueva Insignia!</h3>
+        <p><strong>${insignia.nombre}</strong></p>
+        <p>${insignia.descripcion}</p>
+        <p class="puntos-ganados">+50 puntos</p>
+    `;
+    
+    document.body.appendChild(notificacion);
+    setTimeout(() => notificacion.classList.add('show'), 100);
+    
+    setTimeout(() => {
+        notificacion.classList.remove('show');
+        setTimeout(() => notificacion.remove(), 300);
+    }, 5000);
+}
+
+// ==================== PROGRESO ====================
+
+function actualizarPantallaProgreso() {
+    document.getElementById('stat-lecturas').textContent = estadisticas.lecturasCompletadas;
+    document.getElementById('stat-razonamiento').textContent = estadisticas.razonamientoCompletado;
+    document.getElementById('stat-dictados').textContent = estadisticas.dictadosRealizados;
+    document.getElementById('stat-matematicas').textContent = estadisticas.matematicasCompletadas;
+    document.getElementById('stat-puntos').textContent = estadisticas.puntosTotales;
+    
+    const promedio = estadisticas.totalPreguntas > 0 
+        ? (estadisticas.totalCorrectas / estadisticas.totalPreguntas * 100).toFixed(0)
+        : 0;
+    document.getElementById('stat-promedio').textContent = promedio + '%';
+    
+    mostrarInsignias();
+}
+
 function mostrarInsignias() {
-    const container = document.getElementById('lista-insignias');
+    const container = document.getElementById('insignias-container');
     container.innerHTML = '';
     
     insignias.forEach(insignia => {
         const obtenida = estadisticas.insigniasObtenidas.includes(insignia.id);
-        const card = document.createElement('div');
-        card.className = `insignia-card ${obtenida ? 'obtenida' : ''}`;
-        card.innerHTML = `
-            <div class="insignia-icono">${insignia.icono}</div>
-            <h3>${insignia.nombre}</h3>
-            <p>${insignia.descripcion}</p>
-            ${obtenida ? '<span style="color: green;">✓ Obtenida</span>' : '<span style="color: gray;">Bloqueada</span>'}
+        const insigniaDiv = document.createElement('div');
+        insigniaDiv.className = `insignia ${obtenida ? 'obtenida' : 'bloqueada'}`;
+        insigniaDiv.innerHTML = `
+            <div class="insignia-icono">${obtenida ? insignia.icono : '🔒'}</div>
+            <div class="insignia-nombre">${insignia.nombre}</div>
+            <div class="insignia-desc">${insignia.descripcion}</div>
         `;
-        container.appendChild(card);
-    });
-    
-    mostrarPantalla('insignias');
-}
-
-function verificarInsignias() {
-    insignias.forEach(insignia => {
-        if (!estadisticas.insigniasObtenidas.includes(insignia.id)) {
-            let cumpleRequisito = false;
-            
-            switch(insignia.id) {
-                case 1:
-                    cumpleRequisito = estadisticas.lecturasCompletadas >= 1;
-                    break;
-                case 2:
-                    cumpleRequisito = estadisticas.lecturasCompletadas >= 3;
-                    break;
-                case 3:
-                    cumpleRequisito = estadisticas.lecturasCompletadas >= 6;
-                    break;
-                case 4:
-                    cumpleRequisito = estadisticas.ejerciciosVerbalesCompletados >= 10;
-                    break;
-                case 5:
-                    cumpleRequisito = estadisticas.problemasMatematicosCompletados >= 5;
-                    break;
-                case 6:
-                    cumpleRequisito = estadisticas.problemasMatematicosCompletados >= 20;
-                    break;
-                case 7:
-                    cumpleRequisito = estadisticas.dictadosCompletados >= 1;
-                    break;
-                case 8:
-                    cumpleRequisito = estadisticas.dictadosCompletados >= 5;
-                    break;
-                case 9:
-                    cumpleRequisito = estadisticas.puntos >= 100;
-                    break;
-                case 10:
-                    cumpleRequisito = estadisticas.puntos >= 500;
-                    break;
-                case 11:
-                    cumpleRequisito = estadisticas.puntos >= 1000;
-                    break;
-                case 12:
-                    cumpleRequisito = estadisticas.lecturasCompletadas >= 6 &&
-                                     estadisticas.ejerciciosVerbalesCompletados >= 10 &&
-                                     estadisticas.problemasMatematicosCompletados >= 20 &&
-                                     estadisticas.dictadosCompletados >= 8;
-                    break;
-            }
-            
-            if (cumpleRequisito) {
-                estadisticas.insigniasObtenidas.push(insignia.id);
-                mostrarNotificacionInsignia(insignia);
-            }
-        }
+        container.appendChild(insigniaDiv);
     });
 }
 
-function mostrarNotificacionInsignia(insignia) {
-    alert(`🎉 ¡Nueva insignia desbloqueada!\n\n${insignia.icono} ${insignia.nombre}\n${insignia.descripcion}`);
-}
-
-// Funciones de Estadísticas
-function mostrarEstadisticas() {
-    const container = document.getElementById('contenido-estadisticas');
-    
-    container.innerHTML = `
-        <h2>Mis Estadísticas</h2>
-        <div class="estadistica-item">
-            <span>Puntos Totales:</span>
-            <strong>${estadisticas.puntos}</strong>
-        </div>
-        <div class="estadistica-item">
-            <span>Lecturas Completadas:</span>
-            <strong>${estadisticas.lecturasCompletadas} / 6</strong>
-        </div>
-        <div class="estadistica-item">
-            <span>Ejercicios Verbales:</span>
-            <strong>${estadisticas.ejerciciosVerbalesCompletados}</strong>
-        </div>
-        <div class="estadistica-item">
-            <span>Problemas Matemáticos:</span>
-            <strong>${estadisticas.problemasMatematicosCompletados}</strong>
-        </div>
-        <div class="estadistica-item">
-            <span>Dictados Completados:</span>
-            <strong>${estadisticas.dictadosCompletados} / 8</strong>
-        </div>
-        <div class="estadistica-item">
-            <span>Insignias Obtenidas:</span>
-            <strong>${estadisticas.insigniasObtenidas.length} / 12</strong>
-        </div>
-        <button onclick="reiniciarProgreso()" style="margin-top: 20px; background: #e74c3c;">Reiniciar Progreso</button>
-    `;
-    
-    mostrarPantalla('estadisticas-detalle');
-}
-
-function actualizarEstadisticas() {
-    const puntosElement = document.getElementById('puntos-totales');
-    if (puntosElement) {
-        puntosElement.textContent = estadisticas.puntos;
-    }
-}
-
-// Funciones de Almacenamiento
-function guardarEstadisticas() {
-    localStorage.setItem('estadisticas', JSON.stringify(estadisticas));
-}
-
-function cargarEstadisticas() {
-    const datos = localStorage.getItem('estadisticas');
-    if (datos) {
-        estadisticas = JSON.parse(datos);
-    }
-}
-
-function reiniciarProgreso() {
-    if (confirm('¿Estás seguro de que quieres reiniciar todo tu progreso? Esta acción no se puede deshacer.')) {
+function resetearProgreso() {
+    if (confirm('¿Estás seguro de que quieres reiniciar todo tu progreso, puntos e insignias?')) {
         estadisticas = {
-            puntos: 0,
             lecturasCompletadas: 0,
-            ejerciciosVerbalesCompletados: 0,
-            problemasMatematicosCompletados: 0,
-            dictadosCompletados: 0,
-            insigniasObtenidas: [],
-            historialLecturas: [],
-            historialVerbal: [],
-            historialMatematicas: [],
-            historialDictados: []
+            razonamientoCompletado: 0,
+            dictadosRealizados: 0,
+            matematicasCompletadas: 0,
+            totalCorrectas: 0,
+            totalPreguntas: 0,
+            puntosTotales: 0,
+            insigniasObtenidas: []
         };
         guardarEstadisticas();
-        actualizarEstadisticas();
-        alert('Progreso reiniciado correctamente');
-        mostrarPantalla('menu');
+        alert('Progreso reiniciado');
     }
 }
+
+// ==================== INICIALIZACIÓN ====================
+
+window.onload = function() {
+    cargarEstadisticas();
+    
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(err => {
+            console.log('Service Worker registration failed:', err);
+        });
+    }
+};
