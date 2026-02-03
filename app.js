@@ -34,11 +34,16 @@ function guardarEstadisticas() {
 }
 
 // Navegación entre pantallas
-function showScreen(screenId) {
+function showScreen(screenId, addToHistory = true) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
     });
     document.getElementById(screenId).classList.add('active');
+    
+    // Agregar al historial del navegador
+    if (addToHistory) {
+        history.pushState({ screen: screenId }, '', '#' + screenId);
+    }
     
     // Inicializar contenido según la pantalla
     if (screenId === 'lectura-screen') {
@@ -203,7 +208,7 @@ function cargarEjercicioAnalogias() {
 
 function cargarEjercicioOraciones() {
     const ejercicio = contenidoEducativo.razonamiento.oraciones[ejercicioActual];
-    cargarEjercicioRazonamiento('Completar Oraciones', ejercicio.oracion, ejercicio);
+    cargarEjercicioRazonamiento('Completar Oraciones', ejercicio.texto, ejercicio);
 }
 
 function cargarEjercicioRazonamiento(titulo, pregunta, ejercicio) {
@@ -267,10 +272,17 @@ function verificarRazonamiento(correcta) {
         input.disabled = true;
     });
     
-    // Mostrar botón siguiente
-    document.querySelector('.ejercicio-razonamiento .btn-primary').style.display = 'none';
-    document.getElementById('btn-siguiente-razonamiento').style.display = 'block';
-    document.getElementById('btn-siguiente-razonamiento').onclick = siguienteEjercicioRazonamiento;
+    // Ocultar botón verificar y mostrar botón siguiente
+    const btnVerificar = document.querySelector('.ejercicio-razonamiento button.btn-primary');
+    if (btnVerificar) {
+        btnVerificar.style.display = 'none';
+    }
+    
+    const btnSiguiente = document.getElementById('btn-siguiente-razonamiento');
+    if (btnSiguiente) {
+        btnSiguiente.style.display = 'block';
+        btnSiguiente.onclick = siguienteEjercicioRazonamiento;
+    }
 }
 
 function siguienteEjercicioRazonamiento() {
@@ -380,10 +392,17 @@ function verificarMatematicas(correcta) {
         input.disabled = true;
     });
     
-    // Mostrar botón siguiente
-    document.querySelector('.ejercicio-razonamiento .btn-primary').style.display = 'none';
-    document.getElementById('btn-siguiente-matematicas').style.display = 'block';
-    document.getElementById('btn-siguiente-matematicas').onclick = siguienteEjercicioMatematicas;
+    // Ocultar botón verificar y mostrar botón siguiente
+    const btnVerificar = document.querySelector('.ejercicio-razonamiento button.btn-primary');
+    if (btnVerificar) {
+        btnVerificar.style.display = 'none';
+    }
+    
+    const btnSiguiente = document.getElementById('btn-siguiente-matematicas');
+    if (btnSiguiente) {
+        btnSiguiente.style.display = 'block';
+        btnSiguiente.onclick = siguienteEjercicioMatematicas;
+    }
 }
 
 function siguienteEjercicioMatematicas() {
@@ -500,10 +519,20 @@ function verificarDictado() {
     guardarEstadisticas();
     verificarInsignias();
     
-    setTimeout(() => {
+    // Mostrar botón para siguiente dictado
+    resultadoDiv.style.display = 'block';
+    const btnSiguiente = document.createElement('button');
+    btnSiguiente.className = 'btn-primary';
+    btnSiguiente.textContent = 'Siguiente Dictado';
+    btnSiguiente.style.marginTop = '15px';
+    btnSiguiente.onclick = () => {
         dictadoActual = (dictadoActual + 1) % contenidoEducativo.dictados.length;
         inicializarDictado();
-    }, 5000);
+    };
+    
+    if (!resultadoDiv.querySelector('.btn-primary')) {
+        resultadoDiv.appendChild(btnSiguiente);
+    }
 }
 
 // ==================== SISTEMA DE INSIGNIAS ====================
@@ -627,6 +656,27 @@ function resetearProgreso() {
 
 window.onload = function() {
     cargarEstadisticas();
+    
+    // Manejar navegación con botón retroceder
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.screen) {
+            showScreen(event.state.screen, false);
+        } else {
+            // Si no hay estado, volver al inicio
+            showScreen('inicio-screen', false);
+        }
+    });
+    
+    // Cargar pantalla desde URL si existe hash
+    const hash = window.location.hash.substring(1);
+    if (hash && document.getElementById(hash)) {
+        showScreen(hash, false);
+        // Agregar estado inicial
+        history.replaceState({ screen: hash }, '', '#' + hash);
+    } else {
+        // Estado inicial
+        history.replaceState({ screen: 'inicio-screen' }, '', '#inicio-screen');
+    }
     
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => {
